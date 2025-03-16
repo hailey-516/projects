@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TICKETING SUCCESS - 결제 후 예매 확인 페이지</title>
+
+    <!-- 팝업 내 예매 완료 확인 스타일 -->
+    <link rel="stylesheet" href="/css/ticketing/ticketingSuccess.css">
+
+    <!-- jquery cdn -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    <div class="ticketing-success-container">
+        <div class="success-left-area">
+            <img src="/img/common/exsite-logo.png" alt="로고 이미지">
+        </div>
+
+        <div class="success-right-area">
+            <p>예매가 완료되었습니다!</p>
+
+            <hr />
+
+            <table>
+                <tr>
+                    <th>예매 번호</th>
+                    <td id="merchant-uid">[[${ ticketingInfo.merchantUid }]]</td>
+                    <th>매수</th>
+                    <td>[[${ ticketingInfo.ticketCount }]]매</td>
+                </tr>
+                <tr>
+                    <th>전시명</th>
+                    <td>[[${ ticketingInfo.name }]]</td>
+                    <th>결제 정보</th>
+                    <td id="payment-info">
+                        [[${ticketingInfo.paidAmount}]] 
+                        <span th:if="${ticketingInfo.paidAmount != 0}">, [[${ticketingInfo.payMethod}]]</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>관람 장소</th>
+                    <td>[[${ ticketingInfo.place }]]</td>
+                    <th>수령 방법</th>
+                    <td>현장수령</td>
+                </tr>
+                <tr>
+                    <th>관람일</th>
+                    <td>[[${ ticketingInfo.visitDate }]]</td>
+                    <th>취소 마감</th>
+                    <td>관람일 전일까지</td>
+                </tr>
+                <tr>
+                    <th>이름</th>
+                    <td>[[${ ticketingInfo.buyerName }]]</td>
+                    <th>연락처</th>
+                    <td>[[${ ticketingInfo.buyerTel }]]</td>
+                </tr>
+            </table>
+
+            <div id="btn-area"><button id="view-ticketing-infopage">예매 확인</button></div>
+        </div>
+    </div>
+
+    <script src="/js/ticketing/ticketingSuccess.js"></script>
+
+</body>
+</html>

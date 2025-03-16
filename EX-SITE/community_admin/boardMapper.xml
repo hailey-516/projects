@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.teamx.exsite.model.mapper.community.BoardMapper">
+	
+	<!-- 관리자 페이지 게시글 조회 -->
+	<select id="selectPostList">
+		SELECT POST_NO
+				, POST_CATEGORY
+   	     		, POST_TITLE
+     	 		, USER_ID
+	 	 		, POST_DATETIME
+		FROM COMMUNITY
+        	JOIN USER_INFO USING (USER_NO)
+		WHERE POST_STATUS = 'N'
+		ORDER BY POST_NO DESC
+	</select>
+	
+	<!-- 관리자 페이지 카테고리 변경 -->
+	<update id="updateCategory" parameterType="map">
+		UPDATE COMMUNITY
+            SET POST_CATEGORY = #{category}
+        WHERE POST_NO = #{postNo}
+	</update>
+	
+	<!-- 관리자 페이지 게시글 삭제(상태 변경) -->
+	<update id="deletePosts">
+		UPDATE COMMUNITY
+			SET POST_STATUS = 'Y'
+		WHERE POST_NO IN
+	    <foreach item="postNo" collection="list" open="(" separator="," close=")">
+	        #{postNo}
+	    </foreach>
+	</update>
+	
+	<!-- 관리자 페이지 공지 작성 -->
+	<insert id="insertNotice">
+		INSERT INTO COMMUNITY (POST_NO, POST_TITLE, POST_CONTENT, POST_CATEGORY, POST_DATETIME,
+								POST_VIEW_COUNT, POST_STATUS, USER_NO)
+				VALUES (
+						SEQ_POST_NO.NEXTVAL, #{postTitle}, #{postContent}, '공지', SYSDATE,
+						0, 'N', #{userNo}
+				)
+	</insert>
+	
+	<!-- 관리자 페이지 공지 조회 -->
+	<select id="selectNotice">
+			SELECT POST_NO
+		   	     , POST_TITLE
+			 	 , POST_CONTENT
+			 	 , POST_CATEGORY
+			 	 , POST_DATETIME
+			 	 , POST_VIEW_COUNT
+		     	 , USER_ID
+			FROM COMMUNITY
+	        JOIN USER_INFO USING (USER_NO)
+			WHERE POST_STATUS = 'N' AND POST_CATEGORY = '공지'
+			ORDER BY POST_NO DESC
+	</select>
+	
+	<!-- 관리자 페이지 검색 -->
+	<select id="searchPost">
+			SELECT POST_NO
+		   	     , POST_TITLE
+			 	 , POST_CONTENT
+			 	 , POST_CATEGORY
+			 	 , POST_DATETIME
+			 	 , POST_VIEW_COUNT
+		     	 , USER_ID
+			FROM COMMUNITY
+	        JOIN USER_INFO USING (USER_NO)
+	        WHERE POST_STATUS = 'N' AND
+	        		( POST_TITLE LIKE ('%' || #{keyword} || '%') OR
+	        		USER_ID LIKE ('%' || #{keyword} || '%') )
+	</select>
+	
+</mapper>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>TICKETING POPUP - 예매 팝업</title>
+    
+    <!-- jquery cdn -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- 포트원 cdn -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    
+    <!-- 티켓팅 팝업 스타일 -->
+    <link rel="stylesheet" href="/css/ticketing/ticketingPopup.css">
+
+</head>
+<body>
+    <div class="ticketing-detail-container">
+        <!-- 왼쪽 영역 -->
+        <div class="ticketing-detail-left-area">
+            <!-- 1단계: 관람일 선택 -->
+            <div class="step-content" id="step-1">
+                <img src="/img/common/exsite-logo.png" id="ticketing-detail-logo" alt="로고 이미지">
+                <p>관람일 선택</p>
+                <div class="ticketing-detail-calendar">
+                    <div id="month-year-container">
+                        <button id="prev-month">&lt;</button>
+                        <div id="month-year"></div>
+                        <button id="next-month">&gt;</button>
+                    </div>
+                    <div class="day-container"></div>
+                    <div class="select-date calendar"></div>
+                </div>
+            </div>
+
+            <!-- 2단계: 예매 정보 선택 -->
+            <div class="step-content" id="step-2" style="display: none;">
+                <div id="ticketing-info-text"><p>예매 정보 선택</p></div>
+                <div class="ticket-info-select">
+                    <p>일반(정가)</p>
+                    <p id="ticket-useFee" th:text="${useFee}"></p>
+                    <select name="ticket-count" id="ticket-count">
+                        <option th:each="i : ${#numbers.sequence(1, 50)}" th:value="${i}" th:text="${i}"
+                                th:selected="${i == 1}"></option>
+                    </select>
+                </div>
+
+                <div class="display-user-info">
+                    <table>
+                        <tr>
+                            <th>이름</th>
+                            <td><input type="text" th:value="${session.loginUser.name}" id="input-name"></td>
+                        </tr>
+                        <tr>
+                            <th>연락처</th>
+                            <td><input type="tel" th:value="${session.loginUser.phone}" id="input-phone"></td>
+                        </tr>
+                        <tr>
+                            <th style="border-bottom: none;">이메일</th>
+                            <td style="border-bottom: none;"><input type="text" th:value="${session.loginUser.email}" id="input-email"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="checkbox-area">
+                    <!-- 첫 번째 체크박스 -->
+                    <label class="custom-checkbox-container">
+                        <input type="checkbox" id="terms-and-conditions-1">
+                        <span class="custom-checkbox"></span>
+                        <span id="checkbox-content">주문자 확인 및 예매처리를 위해 휴대폰번호, 이메일, (배송수령 시)주소, (입력필요 시)생년월일을 수집하며, 이용목적 달성 이후 파기합니다.</span>
+                    </label>
+                    <!-- 두 번째 체크박스 -->
+                    <label class="custom-checkbox-container">
+                        <input type="checkbox" id="terms-and-conditions-2">
+                        <span class="custom-checkbox"></span>
+                        <span id="checkbox-content">개인정보 제 3자 제공에 동의합니다. (고객응대 및 관람정보안내 등을 위함)</span>
+                    </label>
+                    <!-- 세 번째 체크박스 -->
+                    <label class="custom-checkbox-container">
+                        <input type="checkbox" id="terms-and-conditions-3">
+                        <span class="custom-checkbox"></span>
+                        <span id="checkbox-content">취소기한 및 취소수수료 동의</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="vertical-line"></div>
+
+        <!-- 오른쪽 영역 -->
+        <div class="ticketing-detail-right-area">
+            <div class="ticketing-detail-right-area-content">
+                <div><img th:src="${mainImg}" alt="전시 대표 이미지" id="ticketing-detail-exhibition-img"></div>
+                <div>
+                    <p id="exhibition-title"></p>
+                    <!-- <span id="exhibition-title-view"></span> -->
+                </div>
+                <div>
+                    <div><b>예매 정보</b></div>
+                    <hr />
+                    <div class="info-row">
+                        <div>일시</div>
+                        <span id="selected-date"></span>
+                    </div>
+                    <hr />
+                    <div class="info-row">
+                        <div>티켓 금액</div>
+                        <span id="ticket-price"></span>
+                    </div>
+                    <hr />
+                    <div class="info-row">
+                        <div id="total-count">총 결제 금액</div>
+                        <span id="total-amount"></span>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+            
+            <!-- 단계별 버튼 -->
+            <div class="button-area">
+                <button id="btn-prev" style="display: none;">이전 단계</button>
+                <button id="btn-next">다음 단계</button>
+                <button id="btn-payment" style="display: none;">결제</button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <input type="hidden" th:value="${exhibitionNo}" id="exhibitionNo"/>
+    <input type="hidden" th:value="${exhibitionTitle}" id="exhibitionTitle"/>
+    <input type="hidden" th:value="${useFee}" id="useFee"/>
+    <input type="hidden" th:value="${endDate}" id="endDate"/>
+    <input type="hidden" th:value="${strtDate}" id="strtDate"/>
+    
+    <!-- iamport.payment.js -->
+    <script src="/js/ticketing/ticketingPopup.js"></script>
+</body>
+</html>

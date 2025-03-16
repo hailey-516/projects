@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teamx.exsite.model.mapper.ticketing.TicketingMapper">
+
+<insert id="insertTicketingInfo">
+	INSERT INTO TICKETING (MERCHANT_UID, TICKETING_DATE, VISIT_DATE, TICKET_STATUS,
+							TICKET_COUNT, EXHIBITION_NO, USER_NO, NAME
+							, BUYER_NAME, BUYER_TEL, BUYER_EMAIL)
+			VALUES (
+					#{merchantUid}, SYSDATE, TO_DATE(#{visitDate}, 'YYYY-MM-DD'), DEFAULT,
+					#{ticketCount}, #{exhibitionNo}, #{userNo}, #{name},
+					#{buyerName}, #{buyerTel}, #{buyerEmail}
+					)
+</insert>
+
+<insert id="insertPaymentInfo">
+	INSERT INTO PAYMENT (MERCHANT_UID, PAY_METHOD, STATUS, IMP_UID, PAID_AMOUNT)
+			VALUES (
+					#{merchantUid}, #{payMethod}, #{status}, #{impUid}, #{paidAmount}
+					)
+</insert>
+
+<select id="ticketingSuccessInfo">
+	SELECT *
+	FROM TICKETING
+		JOIN PAYMENT USING (MERCHANT_UID)
+		JOIN EXHIBITION USING (EXHIBITION_NO)
+	WHERE MERCHANT_UID = #{merchantUid}
+</select>
+
+<insert id="insertFreeTicketingInfo">
+	INSERT INTO TICKETING (MERCHANT_UID, TICKETING_DATE, VISIT_DATE, TICKET_STATUS,
+							TICKET_COUNT, EXHIBITION_NO, USER_NO, NAME,
+							BUYER_NAME, BUYER_TEL)
+			VALUES (
+					#{merchantUid}, SYSDATE, TO_DATE(#{visitDate}, 'YYYY-MM-DD'), DEFAULT,
+					#{ticketCount}, #{exhibitionNo}, #{userNo}, #{name},
+					#{buyerName}, #{buyerTel}
+					)
+</insert>
+
+<select id="freeTicketingSuccessInfo">
+	SELECT *
+	FROM TICKETING
+		JOIN EXHIBITION USING (EXHIBITION_NO)
+	WHERE MERCHANT_UID = #{merchantUid}
+</select>
+
+<select id="selectTicketingList">
+    SELECT *
+    FROM TICKETING
+    JOIN EXHIBITION USING (EXHIBITION_NO)
+    WHERE USER_NO = #{userNo}
+    <if test="ticketingDateRange != null">
+        AND (
+            <choose>
+                <when test="ticketingDateRange == '전체기간'">
+                    1 = 1 <!-- 전체기간은 필터 없이 모든 데이터 조회 -->
+                </when>
+                <when test="ticketingDateRange == '12개월'">
+                    TICKETING_DATE >= ADD_MONTHS(SYSDATE, -12)
+                </when>
+                <when test="ticketingDateRange == '6개월'">
+                    TICKETING_DATE >= ADD_MONTHS(SYSDATE, -6)
+                </when>
+                <when test="ticketingDateRange == '3개월'">
+                    TICKETING_DATE >= ADD_MONTHS(SYSDATE, -3)
+                </when>
+                <when test="ticketingDateRange == '1개월'">
+                    TICKETING_DATE >= ADD_MONTHS(SYSDATE, -1)
+                </when>
+                <otherwise>
+                    1 = 1 <!-- 기본적으로 전체 데이터를 조회 -->
+                </otherwise>
+            </choose>
+        )
+    </if>
+</select>
+
+</mapper>
